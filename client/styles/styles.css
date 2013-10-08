@@ -38,3 +38,9 @@ body {
     color: green;
     line-height: 13px;
 }
+
+.messages {
+    text-align: left;
+    width: 30%;
+    margin-left: 35%; 
+}

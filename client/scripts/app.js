@@ -29,7 +29,9 @@ $(document).ready(function(){
 
   var fetchAndDisplayWrapper = function(){
     $.get('https://api.parse.com/1/classes/chatterbox?order=-createdAt', function(data){
-      fetch(data);
+      var roomMsgs = fetch(data);
+      display(roomMsgs);
+      showRooms(data);
     })
   };
 
@@ -48,7 +50,7 @@ $(document).ready(function(){
     var name = $('#newRoom').val();
     name = htmlEscape(name);
     user.createRoom(name);
-    $('#newRoom').val('');
+    $('#newRoom').val('');  
   });
 
   
@@ -59,8 +61,6 @@ $(document).ready(function(){
       'text': msg,
       'roomname': user.currentRoom
     };
-
-    console.log(message);
 
     $.ajax({
       // always use this url
@@ -95,7 +95,7 @@ $(document).ready(function(){
       }
      
     }
-    display(roomMsgs);
+    return roomMsgs;
   };
 
   var display = function(msgs){
@@ -108,6 +108,43 @@ $(document).ready(function(){
     
   };
 
+
+  var showRooms = function(data){
+    var rooms = {};
+    var name;
+    var counter = 0;
+    $(".rooms").empty();
+
+    for(var i=0; i < data.results.length; i++){
+      name = htmlEscape(data.results[i]['roomname']);
+      if(rooms[name] === undefined){
+        rooms[name] = true;
+      }
+    }
+
+    for(var room in rooms){
+      var $button= $('<input/>').attr({ type: 'button', id:'btn_'+counter, class: 'joinRooms', value:'Join'});
+      var $room = $("<li class='chatRoom'>" + room + "</li>");
+      $('.rooms').append($room)
+      $($room).append($button);
+       // $(".rooms").append("<li class='chatRoom'>" + room + "</li>").append(
+       //   '<button/>', 
+       //   {
+       //   text: "Join", //set text 1 to 10
+       //   id: 'btn_'+counter,
+       //   click: function () { alert('btn_' + counter); }
+       //   }
+
+       //);
+       //console.log('here');
+       counter++;
+      //$(".rooms").append("<li class='chatRoom'>" + room + "</li><button class='button'> Join </button><br>");
+    }
+  };
+
+  $('.rooms').on('click', '.joinRooms', function(){
+    user.currentRoom = $(this).parent().text();
+  });
 
 });
 

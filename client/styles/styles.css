@@ -40,7 +40,13 @@ body {
 }
 
 .messages {
+    float: left;
     text-align: left;
     width: 30%;
-    margin-left: 35%; 
+}
+
+.rooms {
+    float: right;
+    text-align: left;
+    width: 30%;
 }

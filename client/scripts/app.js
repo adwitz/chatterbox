@@ -17,7 +17,7 @@ $(document).ready(function(){
 
   var User = function(currentRoom){
     this.username = location.search.split("=")[1];
-    this.friends = [];
+    this.friends = {};
     this.currentRoom = currentRoom || "";
   }
 
@@ -37,7 +37,7 @@ $(document).ready(function(){
 
   fetchAndDisplayWrapper();
   setInterval(fetchAndDisplayWrapper
-  , 5000);
+  , 1000);
 
   $('.send.message').on('click', function(){
     var text = $('#textbox').val();
@@ -100,13 +100,31 @@ $(document).ready(function(){
 
   var display = function(msgs){
     $(".messages").empty();
-    var messageHTML;
+    var messageHTML = '';
+    var name = '';
+    var isFriend = false;
     for (var i=msgs.length-1; i >= 0; i--){
-      messageHTML = '<li>' + '<b>' + htmlEscape(msgs[i].username) + ': ' + '</b>' + htmlEscape(msgs[i].text) + '</li>';
+      name = htmlEscape(msgs[i].username);
+      isFriend = (user.friends[name]) ?  true : false; 
+      messageHTML = '<li>' + (isFriend ? "<b>" : "") + "<span class = 'clickableUser'>" + name + '</span>: ' + htmlEscape(msgs[i].text) + (isFriend ? "</b>" : "") +'</li>';
       $(".messages").prepend(messageHTML);
     }
     
   };
+
+  $('.messages').on('click', '.clickableUser', function(){
+    var name = this.innerHTML;
+
+    if (user.friends[name] === undefined){
+      user.friends[name] =  true;
+      console.log("yo, we just added a friend!");
+    } else {
+      user.friends[name] = undefined;
+    }
+    //add friend
+       //check if already present
+    
+  });
 
 
   var showRooms = function(data){
